@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Update and upgrade the system packages
-sudo apt update && sudo apt upgrade -y
+#sudo apt update && sudo apt upgrade -y
 
 # Install necessary Python packages
 sudo apt install -y python3-pip
