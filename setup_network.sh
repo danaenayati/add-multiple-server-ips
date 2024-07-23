@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Update and upgrade the system packages
-sudo apt update && sudo apt upgrade -y
+#sudo apt update && sudo apt upgrade -y
 
 # Prompt the user for the number of IP addresses
 read -p "Enter the number of IP addresses: " ip_count
