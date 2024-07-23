@@ -3,6 +3,10 @@
 # Update and upgrade the system packages
 sudo apt update && sudo apt upgrade -y
 
+# Install necessary Python packages
+sudo apt install -y python3-pip
+pip3 install beautifulsoup4 pandas selenium webdriver-manager netifaces fake-useragent requests pytz
+
 # Prompt the user for the number of IP addresses
 read -p "Enter the number of IP addresses: " ip_count
 
