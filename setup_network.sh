@@ -64,3 +64,6 @@ sudo netplan apply
 
 # Display the network interfaces
 ip -br -c a
+
+# Display the SSH access message
+echo "You can now access the server via SSH using the IP address configured for eth0: ${ip_addresses[0]}"
