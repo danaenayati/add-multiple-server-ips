@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Update and upgrade the system packages
-# sudo apt update && sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
 
 # Prompt the user for the number of IP addresses
 read -p "Enter the number of IP addresses: " ip_count
@@ -27,7 +27,7 @@ do
 done
 
 # Generate the netplan configuration file
-cat <<EOF | sudo tee /etc/netplan/01-netcfg.yaml
+cat <<EOF | sudo tee /etc/netplan/50-cloud-init.yaml
 network:
     version: 2
     ethernets:
@@ -36,7 +36,7 @@ EOF
 # Add configuration for each interface to the configuration file
 for (( i=0; i<ip_count; i++ ))
 do
-    cat <<EOF | sudo tee -a /etc/netplan/01-netcfg.yaml
+    cat <<EOF | sudo tee -a /etc/netplan/50-cloud-init.yaml
         eth$i:
             dhcp4: true
             match:
@@ -55,6 +55,10 @@ do
                 priority: $((100 + $i))
 EOF
 done
+
+# Set correct permissions and ownership for the netplan configuration file
+sudo chmod 600 /etc/netplan/50-cloud-init.yaml
+sudo chown root:root /etc/netplan/50-cloud-init.yaml
 
 # Apply the netplan configuration
 sudo netplan apply
