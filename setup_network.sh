@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Update and upgrade the system packages
-#sudo apt update && sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
 
 # Prompt the user for the number of IP addresses
 read -p "Enter the number of IP addresses: " ip_count
@@ -58,10 +58,6 @@ do
                 priority: $priority
 EOF
 done
-
-# Set correct permissions and ownership for the netplan configuration file
-# sudo chmod 600 /etc/netplan/50-cloud-init.yaml
-# sudo chown root:root /etc/netplan/50-cloud-init.yaml
 
 # Apply the netplan configuration
 sudo netplan apply
