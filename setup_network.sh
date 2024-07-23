@@ -31,7 +31,7 @@ do
 done
 
 # Generate the netplan configuration file
-cat <<EOF | sudo tee /etc/netplan/50-cloud-init.yaml
+cat <<EOF | sudo tee /etc/netplan/01-netcfg.yaml
 network:
     version: 2
     ethernets:
@@ -43,7 +43,7 @@ do
     table=$((100 + 100 * i))
     priority=$((100 + 100 * i))
 
-    cat <<EOF | sudo tee -a /etc/netplan/50-cloud-init.yaml
+    cat <<EOF | sudo tee -a /etc/netplan/01-netcfg.yaml
         eth$i:
             dhcp4: true
             match:
