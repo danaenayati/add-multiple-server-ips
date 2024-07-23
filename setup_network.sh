@@ -36,6 +36,9 @@ EOF
 # Add configuration for each interface to the configuration file
 for (( i=0; i<ip_count; i++ ))
 do
+    table=$((100 + 100 * i))
+    priority=$((100 + 100 * i))
+
     cat <<EOF | sudo tee -a /etc/netplan/50-cloud-init.yaml
         eth$i:
             dhcp4: true
@@ -48,17 +51,17 @@ do
             routes:
               - to: 0.0.0.0/0
                 via: ${gateways[$i]}
-                table: $((100 + $i))
+                table: $table
             routing-policy:
               - from: ${ip_addresses[$i]}
-                table: $((100 + $i))
-                priority: $((100 + $i))
+                table: $table
+                priority: $priority
 EOF
 done
 
 # Set correct permissions and ownership for the netplan configuration file
-sudo chmod 600 /etc/netplan/50-cloud-init.yaml
-sudo chown root:root /etc/netplan/50-cloud-init.yaml
+# sudo chmod 600 /etc/netplan/50-cloud-init.yaml
+# sudo chown root:root /etc/netplan/50-cloud-init.yaml
 
 # Apply the netplan configuration
 sudo netplan apply
