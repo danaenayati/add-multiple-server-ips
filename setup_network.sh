@@ -1,59 +1,39 @@
 #!/bin/bash
 
-# Function to prompt for user input and store it in a variable
-prompt_input() {
-    local prompt_text="$1"
-    local input_variable
-    read -p "$prompt_text" input_variable
-    echo "$input_variable"
-}
+# Update and upgrade the system packages
+sudo apt update && sudo apt upgrade -y
 
-# Get the number of interfaces
-num_interfaces=$(prompt_input "Enter the number of network interfaces: ")
+# Prompt the user for network configuration details
+read -p "Enter the MAC address (e.g., fa:16:3e:65:84:0c): " macaddress
+read -p "Enter the IP address (e.g., 5.34.192.194): " your_ip
+read -p "Enter the subnet (e.g., 22): " subnet
+read -p "Enter the gateway (e.g., 5.34.192.1): " gateway
 
-# Initialize arrays to hold the network details
-declare -a mac_addresses
-declare -a ip_addresses
-declare -a gateways
-
-# Loop to collect MAC addresses, IP addresses and gateways for each interface
-for ((i = 0; i < num_interfaces; i++)); do
-    mac_addresses[i]=$(prompt_input "Enter the MAC address for eth$i: ")
-    ip_addresses[i]=$(prompt_input "Enter the IP address for eth$i: ")
-    gateways[i]=$(prompt_input "Enter the gateway for eth$i: ")
-done
-
-# Create the netplan configuration file
-cat <<EOL | sudo tee /etc/netplan/01-netcfg.yaml
+# Generate the netplan configuration file
+cat <<EOF | sudo tee /etc/netplan/01-netcfg.yaml
 network:
     version: 2
     ethernets:
-EOL
-
-# Loop to append the details of each interface to the configuration file
-for ((i = 0; i < num_interfaces; i++)); do
-    cat <<EOL | sudo tee -a /etc/netplan/01-netcfg.yaml
-        eth$i:
+        eth0:
             dhcp4: true
             match:
-                macaddress: ${mac_addresses[i]}
+                macaddress: ${macaddress}
             mtu: 1500
-            set-name: eth$i
+            set-name: eth0
             addresses:
-              - ${ip_addresses[i]}/22
+              - ${your_ip}/${subnet}
             routes:
               - to: 0.0.0.0/0
-                via: ${gateways[i]}
-                table: $((100 * (i + 1)))
+                via: ${gateway}
+                table: 100
             routing-policy:
-              - from: ${ip_addresses[i]}
-                table: $((100 * (i + 1)))
-                priority: $((100 * (i + 1)))
-EOL
-done
+              - from: ${your_ip}
+                table: 100
+                priority: 100
+EOF
 
-# Apply the new network configuration
+# Apply the netplan configuration
 sudo netplan apply
 
-# Verify the IPs
+# Display the network interfaces
 ip -br -c a
